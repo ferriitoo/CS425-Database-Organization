@@ -1,0 +1,60 @@
+-- Insert data into RENTER table
+INSERT INTO RENTER (email, name, desired_move_in_date, preferred_location, budget)
+VALUES ('john@email.com', 'Erling Haaland', '2023-06-01', 'New York', 2500.00),
+       ('jane@email.com', 'Bernardo Silva', '2023-07-01', 'Los Angeles', 3000.00);
+
+-- Insert data into AGENTS table
+INSERT INTO AGENTS (email, name, job_title, real_estate_agency, contact_info)
+VALUES ('agent@email.com', 'Pep Guardiola', 'Real Estate Agent', 'DreamHomes Realty', '555-1234');
+
+-- Insert data into ADDRESS table
+INSERT INTO ADDRESS (street, postcode, city, state)
+VALUES ('123 Main St', 11111, 'New York', 'NY'),
+       ('456 Elm St', 22222, 'Los Angeles', 'CA'),
+       ('789 Oak St', 33333, 'Chicago', 'IL'),
+       ('1237 W Fullerton Ave', 60614, 'Chicago', 'Illinois');
+
+-- Insert data into NEIGHBOURHOOD table
+INSERT INTO NEIGHBOURHOOD (name, postcode, crime_rates, happiness_score, nearby_schools, nearby_hospitals)
+VALUES ('Rosewood', 10101, 23.45, 85.50, 10, 3),
+       ('Green Park', 10202, 15.60, 92.10, 8, 5),
+       ('Blue Ridge', 10303, 35.20, 73.80, 5, 2),
+       ('West End', 10404, 11.75, 96.50, 12, 6),
+       ('Maplewood', 10505, 18.90, 88.25, 7, 4);
+
+INSERT INTO PROPERTY (propertyid, city, state, description, address, neigh_postcode, neigh_name, price, rental_price, isinrent, isinsale, type, availability, square_footage, email)
+VALUES (5, 'Los Angeles', 'CA', 'Modern loft with rooftop access', '123 Hollywood Blvd', 10202, 'Green Park', 800000.00, 3500.00, true, false, 'Vacation_Home', true, 1500.00, 'agent@email.com'),
+(6, 'Los Angeles', 'CA', 'Spanish-style villa with ocean views', '456 Ocean Dr', 10202, 'Green Park', 4000000.00, 15000.00, true, false, 'House', true, 5000.00, 'agent@email.com'),
+(7, 'Austin', 'TX', 'Cozy condo near downtown', '789 Congress Ave', 10505, 'Maplewood', 300000.00, 1200.00, true, false, 'House', true, 800.00, 'agent@email.com'),
+(8, 'Austin', 'TX', 'Big land', '123 Oak St', 10101, 'Rosewood', 900000.00, 3500.00, true, false, 'Land', true, 2000.00, 'agent@email.com');
+
+-- Insert data into HOUSE table
+INSERT INTO HOUSE (propertyid, numrooms, type)
+VALUES (6, 3, 'House'),
+(7, 5, 'House');
+
+-- Insert data into LAND table
+INSERT INTO LAND (propertyid, typeofland, type)
+VALUES (8, 'Industrial', 'Land');
+
+
+-- Insert data into VACATION_HOME table
+INSERT INTO VACATION_HOME (propertyid, numrooms, type)
+VALUES (5, 3, 'Vacation_Home');
+
+-- Insert data into USERS table
+INSERT INTO USERS (email, name)
+VALUES ('john@email.com', 'John Doe'),
+('jane@email.com', 'Jane Smith'),
+('agent@email.com', 'Agent Bob');
+
+-- Insert data into REWARD_PROGRAM table
+INSERT INTO REWARD_PROGRAM (reward_id, points, email)
+VALUES (1, 100, 'john@email.com'),
+(2, 50, 'jane@email.com');
+
+-- Insert data into BOOKINGS table
+INSERT INTO BOOKINGS (cardnumber, email, propertyid, booking_id, rewards_id)
+VALUES (1234567890123456, 'john@email.com', 1, 1, 1),
+(2345678901234567, 'jane@email.com', 2, 2, 2);
+
