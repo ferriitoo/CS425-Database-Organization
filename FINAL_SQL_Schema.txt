@@ -1,0 +1,400 @@
+-- Table: public.address
+
+-- DROP TABLE IF EXISTS public.address;
+
+CREATE TABLE IF NOT EXISTS public.address
+(
+    street character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    postcode integer NOT NULL,
+    city character varying(255) COLLATE pg_catalog."default",
+    state character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT address_pkey PRIMARY KEY (street, postcode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.address
+    OWNER to postgres;
+
+
+-- Table: public.agent
+
+-- DROP TABLE IF EXISTS public.agent;
+
+CREATE TABLE IF NOT EXISTS public.agent
+(
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    job_title character varying(255) COLLATE pg_catalog."default",
+    real_estate_agency character varying(255) COLLATE pg_catalog."default",
+    contact_info character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT agent_pkey PRIMARY KEY (email),
+    CONSTRAINT agent_email_fkey FOREIGN KEY (email)
+        REFERENCES public.users (email) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.agent
+    OWNER to postgres;
+-- Index: idx_agent_email
+
+-- DROP INDEX IF EXISTS public.idx_agent_email;
+
+CREATE INDEX IF NOT EXISTS idx_agent_email
+    ON public.agent USING btree
+    (name COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Table: public.apartment
+
+-- DROP TABLE IF EXISTS public.apartment;
+
+CREATE TABLE IF NOT EXISTS public.apartment
+(
+    propertyid integer NOT NULL,
+    numrooms integer,
+    type character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT apartment_pkey PRIMARY KEY (propertyid),
+    CONSTRAINT unique_propertyid_apartment UNIQUE (propertyid),
+    CONSTRAINT apartment_propertyid_fkey FOREIGN KEY (propertyid)
+        REFERENCES public.property (propertyid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT apartment_type_check CHECK (type::text = 'Apartment'::text)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.apartment
+    OWNER to postgres;
+
+-- Table: public.bookings
+
+-- DROP TABLE IF EXISTS public.bookings;
+
+CREATE TABLE IF NOT EXISTS public.bookings
+(
+    cardnumber bigint NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    propertyid integer NOT NULL,
+    booking_id integer NOT NULL,
+    rewards_id integer,
+    CONSTRAINT bookings_pkey PRIMARY KEY (booking_id),
+    CONSTRAINT bookings_cardnumber_fkey FOREIGN KEY (cardnumber)
+        REFERENCES public.credit_card ("number") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT bookings_email_fkey FOREIGN KEY (email)
+        REFERENCES public.renter (email) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT bookings_email_fkey1 FOREIGN KEY (email)
+        REFERENCES public.renter (email) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT bookings_propertyid_fkey FOREIGN KEY (propertyid)
+        REFERENCES public.property (propertyid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT bookings_rewards_id_fkey FOREIGN KEY (rewards_id)
+        REFERENCES public.reward_program (reward_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT b_cc_number_length_check CHECK (length(cardnumber::text) = 16)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.bookings
+    OWNER to postgres;
+
+-- Table: public.commercial_building
+
+-- DROP TABLE IF EXISTS public.commercial_building;
+
+CREATE TABLE IF NOT EXISTS public.commercial_building
+(
+    propertyid integer NOT NULL,
+    type character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    typeofbusiness character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT commercial_building_pkey PRIMARY KEY (propertyid),
+    CONSTRAINT unique_propertyid_commercial_building UNIQUE (propertyid),
+    CONSTRAINT commercial_building_propertyid_fkey FOREIGN KEY (propertyid)
+        REFERENCES public.property (propertyid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT commercial_building_type_check CHECK (type::text = 'Comercial Building'::text)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.commercial_building
+    OWNER to postgres;
+
+-- Table: public.credit_card
+
+-- DROP TABLE IF EXISTS public.credit_card;
+
+CREATE TABLE IF NOT EXISTS public.credit_card
+(
+    "number" bigint NOT NULL,
+    expiration date NOT NULL,
+    cvv integer NOT NULL,
+    street character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    postcode integer NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT credit_card_pkey PRIMARY KEY ("number"),
+    CONSTRAINT credit_card_email_fkey FOREIGN KEY (email)
+        REFERENCES public.users (email) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT credit_card_street_postcode_fkey FOREIGN KEY (postcode, street)
+        REFERENCES public.address (postcode, street) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT cc_number_length_check CHECK (length(number::text) = 16),
+    CONSTRAINT credit_card_cvv_check CHECK (cvv < 1000),
+    CONSTRAINT credit_card_postcode_check CHECK (postcode < 100000)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.credit_card
+    OWNER to postgres;
+
+-- Table: public.house
+
+-- DROP TABLE IF EXISTS public.house;
+
+CREATE TABLE IF NOT EXISTS public.house
+(
+    propertyid integer NOT NULL,
+    numrooms integer,
+    type character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT house_pkey PRIMARY KEY (propertyid),
+    CONSTRAINT unique_propertyid_house UNIQUE (propertyid),
+    CONSTRAINT house_propertyid_fkey FOREIGN KEY (propertyid)
+        REFERENCES public.property (propertyid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT house_type_check CHECK (type::text = 'House'::text)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.house
+    OWNER to postgres;
+
+-- Table: public.land
+
+-- DROP TABLE IF EXISTS public.land;
+
+CREATE TABLE IF NOT EXISTS public.land
+(
+    propertyid integer NOT NULL,
+    typeofland character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT land_pkey PRIMARY KEY (propertyid),
+    CONSTRAINT unique_propertyid_land UNIQUE (propertyid),
+    CONSTRAINT land_propertyid_fkey FOREIGN KEY (propertyid)
+        REFERENCES public.property (propertyid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT land_type_check CHECK (type::text = 'Land'::text)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.land
+    OWNER to postgres;
+
+-- Table: public.neighborhood
+
+-- DROP TABLE IF EXISTS public.neighborhood;
+
+CREATE TABLE IF NOT EXISTS public.neighborhood
+(
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    postcode integer NOT NULL,
+    crime_rates numeric(7,2),
+    happiness_score numeric(5,2),
+    nearby_schools integer,
+    nearby_hospitals integer,
+    CONSTRAINT neighborhood_pkey PRIMARY KEY (name, postcode),
+    CONSTRAINT neighborhood_check CHECK (happiness_score >= 0::numeric AND crime_rates <= 100.00),
+    CONSTRAINT neighborhood_crime_rates_check CHECK (crime_rates >= 0::numeric AND crime_rates <= 50000.00),
+    CONSTRAINT neighborhood_nearby_schools_check CHECK (nearby_schools >= 0 AND nearby_schools::numeric <= 100.00),
+    CONSTRAINT neighborhood_nearby_schools_check1 CHECK (nearby_schools >= 0 AND nearby_schools::numeric <= 100.00),
+    CONSTRAINT neighborhood_postcode_check CHECK (postcode < 100000)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.neighborhood
+    OWNER to postgres;
+-- Index: idx_neighborhood_postcode
+
+-- DROP INDEX IF EXISTS public.idx_neighborhood_postcode;
+
+CREATE INDEX IF NOT EXISTS idx_neighborhood_postcode
+    ON public.neighborhood USING btree
+    (postcode ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Table: public.property
+
+-- DROP TABLE IF EXISTS public.property;
+
+CREATE TABLE IF NOT EXISTS public.property
+(
+    propertyid integer NOT NULL,
+    city character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    state character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    description character varying(500) COLLATE pg_catalog."default",
+    address character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    neigh_postcode integer NOT NULL,
+    neigh_name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    price numeric(10,2),
+    rental_price numeric(10,2),
+    isinrent boolean NOT NULL,
+    isinsale boolean NOT NULL,
+    type character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    availability boolean NOT NULL,
+    square_footage numeric(10,2) NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT property_pkey PRIMARY KEY (propertyid),
+    CONSTRAINT property_email_fkey FOREIGN KEY (email)
+        REFERENCES public.agent (email) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT property_neigh_name_neigh_postcode_fkey FOREIGN KEY (neigh_name, neigh_postcode)
+        REFERENCES public.neighborhood (name, postcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT property_neigh_postcode_check CHECK (neigh_postcode < 100000),
+    CONSTRAINT property_type_check CHECK (type::text = ANY (ARRAY['House'::character varying, 'Apartment'::character varying, 'Land'::character varying, 'Vacation_Home'::character varying, 'Commercial_building'::character varying]::text[]))
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.property
+    OWNER to postgres;
+-- Index: idx_property_type
+
+-- DROP INDEX IF EXISTS public.idx_property_type;
+
+CREATE INDEX IF NOT EXISTS idx_property_type
+    ON public.property USING btree
+    (type COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Table: public.renter
+
+-- DROP TABLE IF EXISTS public.renter;
+
+CREATE TABLE IF NOT EXISTS public.renter
+(
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    desired_move_in_date date NOT NULL,
+    preferred_location character varying(255) COLLATE pg_catalog."default",
+    budget numeric(10,2),
+    CONSTRAINT renter_pkey PRIMARY KEY (email),
+    CONSTRAINT renter_email_fkey FOREIGN KEY (email)
+        REFERENCES public.users (email) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.renter
+    OWNER to postgres;
+-- Index: idx_renter_budget
+
+-- DROP INDEX IF EXISTS public.idx_renter_budget;
+
+CREATE INDEX IF NOT EXISTS idx_renter_budget
+    ON public.renter USING btree
+    (budget ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_renter_email
+
+-- DROP INDEX IF EXISTS public.idx_renter_email;
+
+CREATE INDEX IF NOT EXISTS idx_renter_email
+    ON public.renter USING btree
+    (name COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Table: public.reward_program
+
+-- DROP TABLE IF EXISTS public.reward_program;
+
+CREATE TABLE IF NOT EXISTS public.reward_program
+(
+    reward_id integer NOT NULL,
+    points integer,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT reward_program_pkey PRIMARY KEY (reward_id),
+    CONSTRAINT reward_program_email_fkey FOREIGN KEY (email)
+        REFERENCES public.renter (email) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.reward_program
+    OWNER to postgres;
+
+-- Table: public.users
+
+-- DROP TABLE IF EXISTS public.users;
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT users_pkey PRIMARY KEY (email)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.users
+    OWNER to postgres;
+-- Index: idx_user_email
+
+-- DROP INDEX IF EXISTS public.idx_user_email;
+
+CREATE INDEX IF NOT EXISTS idx_user_email
+    ON public.users USING btree
+    (email COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Table: public.vacation_home
+
+-- DROP TABLE IF EXISTS public.vacation_home;
+
+CREATE TABLE IF NOT EXISTS public.vacation_home
+(
+    propertyid integer NOT NULL,
+    numrooms integer,
+    type character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT vacation_home_pkey PRIMARY KEY (propertyid),
+    CONSTRAINT unique_propertyid_vacation_home UNIQUE (propertyid),
+    CONSTRAINT vacation_home_propertyid_fkey FOREIGN KEY (propertyid)
+        REFERENCES public.property (propertyid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT vacation_home_type_check CHECK (type::text = 'Vacation_Home'::text)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.vacation_home
+    OWNER to postgres;
+
