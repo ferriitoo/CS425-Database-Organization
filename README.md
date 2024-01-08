@@ -8,6 +8,8 @@ This subject provides its students with a solid understanding on Database Schema
 
 📁 ***_PROJECT: Real Estate Management Application_***
 
+ER Design - Relational Schema
+
 <img src="https://github.com/ferriitoo/CS425-Database-Organization/blob/main/ER Diagram Real Estate.png" width="500"/>
 
 REAL ESTATE DEMO VIDEO: 
