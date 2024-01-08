@@ -1,4 +1,4 @@
-***Author: Julen Ferro 🚗***
+***Authors: Julen Ferro & Mikel Mendibe***
 
 # ***_DATABASE ORGANIZATION_*** 🛠️
 
