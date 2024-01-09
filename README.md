@@ -12,5 +12,4 @@ ER Design - Relational Schema
 
 <img src="https://github.com/ferriitoo/CS425-Database-Organization/blob/main/ER Diagram Real Estate.png" width="500"/>
 
-REAL ESTATE DEMO VIDEO: 
-[Watch the Video](https://drive.google.com/drive/u/0/folders/1bu0whKZvSFkIlFqUB_MOJAXnAntrfK1Z).
+***_REAL ESTATE DEMO VIDEO:_*** [Watch the Video](https://drive.google.com/drive/u/0/folders/1bu0whKZvSFkIlFqUB_MOJAXnAntrfK1Z).
